@@ -10,7 +10,7 @@ var xmlHttp = require('xmlhttprequest').XMLHttpRequest;
 
 //$.html();
 /* GET home page. */
-//router.get('/', function(req, res, next) {
+router.get('/', function(req, res, next) {
 	//res.setHeader('Content-Type', 'application/html');
 	//res.send(JSON.stringify({a: 1}));
     //res.render('index', { title: 'Express' });
