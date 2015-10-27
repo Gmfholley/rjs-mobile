@@ -1,0 +1,315 @@
+<html><head><title>WebDocs - Document Management for the Web</title><link rel="stylesheet" type="text/css" href="/RJSIMAGE/docdetail.css"></head><body class="isBGColor1">
+<table border="1" bordercolor="#000000" bgcolor="#FFFFFF"><tr><td width="249" bordercolor="#FFFFFF"><table width="500"><tr><td colspan="7" class="isTitle">Document Search</td></tr><tr><td><table><SCRIPT type="text/javascript">
+function sbmSrchForm() {
+document.form2.action.value="SRCHFORM" 
+document.form2.submit()
+return true
+}
+</SCRIPT>
+<SCRIPT type="text/javascript">
+function lookupwindow(KeyFldNam,KeyType,KeyVal) {
+lcurl ='http://as400.farmers-national.com:1080/IMAGESERVER/DOC106R'
+lcurl +='?KEYTYPE='
+lcurl += KeyType
+lcurl +='&KEYVAL='
+lcurl += KeyVal
+lcurl +='&KEYFLDNAM='
+lcurl += KeyFldNam
+lcurl += form2.SRCHFLD01 != null ? '&SRCHFLD01=' + form2.SRCHFLD01.value : ''
+lcurl += form2.SRCHFLD02 != null ? '&SRCHFLD02=' + form2.SRCHFLD02.value : ''
+lcurl += form2.SRCHFLD03 != null ? '&SRCHFLD03=' + form2.SRCHFLD03.value : ''
+lcurl += form2.SRCHFLD04 != null ? '&SRCHFLD04=' + form2.SRCHFLD04.value : ''
+lcurl += form2.SRCHFLD05 != null ? '&SRCHFLD05=' + form2.SRCHFLD05.value : ''
+lcurl += form2.SRCHFLD06 != null ? '&SRCHFLD06=' + form2.SRCHFLD06.value : ''
+lcurl += form2.SRCHFLD07 != null ? '&SRCHFLD07=' + form2.SRCHFLD07.value : ''
+lcurl += form2.SRCHFLD08 != null ? '&SRCHFLD08=' + form2.SRCHFLD08.value : ''
+lcurl += form2.SRCHFLD09 != null ? '&SRCHFLD09=' + form2.SRCHFLD09.value : ''
+lcurl += form2.SRCHFLD10 != null ? '&SRCHFLD10=' + form2.SRCHFLD10.value : ''
+msgWindow=open(lcurl,'smallwin','height=500,width=600,title=no,status=no,scrollbars=yes');
+if (msgWindow.opener == null) msgWindow.opener == self;
+}
+</SCRIPT>
+<form name="form2" method="post" action="http://as400.farmers-national.com:1080/IMAGESERVER/DOC100R">
+<table width="500" class="mainTable" border="0"><tr><td  class="mainTblData"> <table width="484" border="0" ><tr><td align="left" colspan="3" height="17" class="navTdBdr"><table width="478" border="0"><tr><tr>
+<td width="193" height="17" class="isBdr">Doc Type</td>
+<td width="281" height="17" class="isNoRtBdr">
+<select  class="isType" name="SRCHDOCTYP" onChange=sbmSrchForm()>
+<option value="*****">All Doc Types
+</option>
+<option value="FMDOCUMENTS" selected>Farm Management Documents
+</option>
+</select>
+</td>
+<td width="1" height="17">&nbsp;</td>
+</tr>
+<tr>
+<td width="193" height="17" class="isBdr">Doc Folder</td>
+<td width="281" height="17" class="isNoRtBdr">
+<select  class="isType" name="SRCHFOLDER"><option value=" /  /  /  /  /">All Authorized Folders
+</option>
+<option value="FARMMNGMNT/ / / / /" selected>FNC F/M Documents
+</option>
+<option value="FARMMNGMNT/ QA/ / / /">FNC F/M Documents/QA Folder
+</option>
+</select>
+</td>
+<td width="1" height="17">&nbsp;</td>
+</tr>
+<tr>
+<td width="193" height="17" class="isBdr">Doc Dates</td>
+<td height="17" class="isNoRtBdr"><input type="text" class="isDate" name="BEGDAT" size="10" maxlength="10">&nbsp;-&nbsp;<input type="text" class="isDate"  name="ENDDAT" size="10" maxlength="10">&nbsp;&nbsp;(MM/DD/YYYY)</td>
+</tr>
+<tr >
+<td width="193" height="17" class="isBdr">
+Doc Title</td>
+<td width="281" height="17" class="isNoRtBdr">
+<select  class="isType" name="SRCHTITLE" id="">
+<option value="*" selected>*
+</option>
+<option value="Accounting - Financial - Monthly &amp; Quarterly" >Accounting - Financial - Monthly &amp; Quarterly
+</option>
+<option value="Accounting - Financial - Yearend &amp; 1099s" >Accounting - Financial - Yearend &amp; 1099s
+</option>
+<option value="Accounting-Other Accounting Info/Notes" >Accounting-Other Accounting Info/Notes
+</option>
+<option value="Client Banking Information" >Client Banking Information
+</option>
+<option value="Commodity Pricing Authorization" >Commodity Pricing Authorization
+</option>
+<option value="Correspondence-General" >Correspondence-General
+</option>
+<option value="Environmental Review" >Environmental Review
+</option>
+<option value="Farm Statements" >Farm Statements
+</option>
+<option value="File Review" >File Review
+</option>
+<option value="FSA-Acreage Certification" >FSA-Acreage Certification
+</option>
+<option value="FSA-Average Adjusted Gross Income (AGI)" >FSA-Average Adjusted Gross Income (AGI)
+</option>
+<option value="FSA-Bulk Scan" >FSA-Bulk Scan
+</option>
+<option value="FSA-Contracts" >FSA-Contracts
+</option>
+<option value="FSA-Direct Deposits" >FSA-Direct Deposits
+</option>
+<option value="FSA-FSA Sign-up forms" >FSA-FSA Sign-up forms
+</option>
+<option value="FSA-General" >FSA-General
+</option>
+<option value="FSA-Letters to FSA" >FSA-Letters to FSA
+</option>
+<option value="FSA-Other FSA Documents" >FSA-Other FSA Documents
+</option>
+<option value="FSA-Power of Attorney forms" >FSA-Power of Attorney forms
+</option>
+<option value="Insurance-Farm Administration Certificate" >Insurance-Farm Administration Certificate
+</option>
+<option value="Insurance-Insurance Correspondence" >Insurance-Insurance Correspondence
+</option>
+<option value="Insurance-Irrigation Equipment" >Insurance-Irrigation Equipment
+</option>
+<option value="Leasing-Bulk Scan" >Leasing-Bulk Scan
+</option>
+<option value="Leasing-Custom Memos" >Leasing-Custom Memos
+</option>
+<option value="Leasing-Farm/Ranch Leases, Lease Addendums &amp; Custom Agreements" >Leasing-Farm/Ranch Leases, Lease Addendums &amp; Custom Agreements
+</option>
+<option value="Leasing-House Documentation" >Leasing-House Documentation
+</option>
+<option value="Leasing-House/Building Leases &amp; Addendums" >Leasing-House/Building Leases &amp; Addendums
+</option>
+<option value="Leasing-HLN" >Leasing-HLN
+</option>
+<option value="Leasing-Lease Terminations" >Leasing-Lease Terminations
+</option>
+<option value="Leasing-Letters" >Leasing-Letters
+</option>
+<option value="Leasing-Letters of Credit" >Leasing-Letters of Credit
+</option>
+<option value="Leasing-O&amp;G" >Leasing-O&amp;G
+</option>
+<option value="Leasing-Operator Insurance" >Leasing-Operator Insurance
+</option>
+<option value="Leasing-Other Leasing Documents" >Leasing-Other Leasing Documents
+</option>
+<option value="Leasing-Real Estate Disclosures" >Leasing-Real Estate Disclosures
+</option>
+<option value="Leasing-Split Payment Letters" >Leasing-Split Payment Letters
+</option>
+<option value="Management Agreement-History" >Management Agreement-History
+</option>
+<option value="Permanent-Account Verification Forms" >Permanent-Account Verification Forms
+</option>
+<option value="Permanent-Check-in Report &amp; Attachments" >Permanent-Check-in Report &amp; Attachments
+</option>
+<option value="Permanent-Checklists &amp; Green Sheets" >Permanent-Checklists &amp; Green Sheets
+</option>
+<option value="Permanent-Custom Memos" >Permanent-Custom Memos
+</option>
+<option value="Permanent-Database Changes" >Permanent-Database Changes
+</option>
+<option value="Permanent-Death Certificates, Letters of Appointment &amp; Wills" >Permanent-Death Certificates, Letters of Appointment &amp; Wills
+</option>
+<option value="Permanent-Deeds" >Permanent-Deeds
+</option>
+<option value="Permanent-Easements" >Permanent-Easements
+</option>
+<option value="Permanent-Farm Program" >Permanent-Farm Program
+</option>
+<option value="Permanent-Management Agreements &amp; Addendums" >Permanent-Management Agreements &amp; Addendums
+</option>
+<option value="Permanent-Maps" >Permanent-Maps
+</option>
+<option value="Permanent-Statement of Tenant" >Permanent-Statement of Tenant
+</option>
+<option value="Permanent-Other Permanent Documents" >Permanent-Other Permanent Documents
+</option>
+<option value="Permanent-Trust/Corporate/Partnership Papers" >Permanent-Trust/Corporate/Partnership Papers
+</option>
+<option value="Permanent-W-9s" >Permanent-W-9s
+</option>
+<option value="Production Evidence" >Production Evidence
+</option>
+<option value="Reports-Analysis Reports" >Reports-Analysis Reports
+</option>
+<option value="Reports-Analysis and Planning" >Reports-Analysis and Planning
+</option>
+<option value="Reports-Crop Acreage Maps" >Reports-Crop Acreage Maps
+</option>
+<option value="Reports-Crop Acreage Reports" >Reports-Crop Acreage Reports
+</option>
+<option value="Reports-Cropping Plans (Budgets)" >Reports-Cropping Plans (Budgets)
+</option>
+<option value="Reports-Farm Investment Analysis" >Reports-Farm Investment Analysis
+</option>
+<option value="Reports-Farm Reports" >Reports-Farm Reports
+</option>
+<option value="Reports-Grain Marketing Reports (Owner Inventory)" >Reports-Grain Marketing Reports (Owner Inventory)
+</option>
+<option value="Reports-Harvest Reports" >Reports-Harvest Reports
+</option>
+<option value="Reports-Inspection Reports" >Reports-Inspection Reports
+</option>
+<option value="Reports-Lease Investment Analysis" >Reports-Lease Investment Analysis
+</option>
+<option value="Reports-Leasing Reports" >Reports-Leasing Reports
+</option>
+<option value="Reports-Owner Inventory" >Reports-Owner Inventory
+</option>
+<option value="Reports-Planning Reports" >Reports-Planning Reports
+</option>
+<option value="Reports-Supplemental Reports" >Reports-Supplemental Reports
+</option>
+<option value="Returned to CS Manager for Title" >Returned to CS Manager for Title
+</option>
+<option value="Returned to Accounting Manager for Title" >Returned to Accounting Manager for Title
+</option>
+<option value="Statement of Tenant" >Statement of Tenant
+</option>
+<option value="Taxes-Real Estate Taxes" >Taxes-Real Estate Taxes
+</option>
+</select>
+</td>
+<td width="1" height="17">&nbsp;</td>
+</tr>
+<tr>
+<td width="193" height="17" class="isBdr">
+Farm Number</td>
+<td height="17" class="isNoRtBdr"><input  type="text"  class="isIndex" name="SRCHFLD01" id="" size="44" maxlength="200"></td>
+<td><a href="#" onClick="lookupwindow('SRCHFLD01','FMDOCUMENTS','USERKEY1')"><img src=/RJSIMAGE/ButtonLookup.Gif width="48" height="15" border="0"></a></td>
+</tr>
+<tr>
+<td width="193" height="17" class="isBdr">
+Owner Address Book Number</td>
+<td height="17" class="isNoRtBdr"><input  type="text"  class="isIndex" name="SRCHFLD02" id="" size="44" maxlength="200"></td>
+<td><a href="#" onClick="lookupwindow('SRCHFLD02','FMDOCUMENTS','USERKEY2')"><img src=/RJSIMAGE/ButtonLookup.Gif width="48" height="15" border="0"></a></td>
+</tr>
+<tr>
+<td width="193" height="17" class="isBdr">
+Owner Name</td>
+<td height="17" class="isNoRtBdr"><input  type="text"  class="isIndex" name="SRCHFLD03" id="" size="44" maxlength="200"></td>
+<td><a href="#" onClick="lookupwindow('SRCHFLD03','FMDOCUMENTS','USERKEY3')"><img src=/RJSIMAGE/ButtonLookup.Gif width="48" height="15" border="0"></a></td>
+</tr>
+<tr >
+<td width="193" height="17" class="isBdr">
+Crop Year</td>
+<td width="281" height="17" class="isNoRtBdr">
+<select  class="isType" name="SRCHFLD04" id="">
+<option value="*" selected>*
+</option>
+<option value="2015" >2015
+</option>
+<option value="2014" >2014
+</option>
+<option value="2013" >2013
+</option>
+<option value="2012" >2012
+</option>
+<option value="2011" >2011
+</option>
+<option value="2010" >2010
+</option>
+<option value="2009" >2009
+</option>
+<option value="2008" >2008
+</option>
+<option value="2007" >2007
+</option>
+<option value="2006" >2006
+</option>
+<option value="2005" >2005
+</option>
+</select>
+</td>
+<td width="1" height="17">&nbsp;</td>
+</tr>
+<tr>
+<td width="193" height="17" class="isBdr">
+Crop Type</td>
+<td height="17" class="isNoRtBdr"><input  type="text"  class="isIndex" name="SRCHFLD05" id="" size="44" maxlength="200"></td>
+<td><a href="#" onClick="lookupwindow('SRCHFLD05','FMDOCUMENTS','USERKEY5')"><img src=/RJSIMAGE/ButtonLookup.Gif width="48" height="15" border="0"></a></td>
+</tr>
+<tr>
+<td width="193" height="17" class="isBdr">
+Lease No.</td>
+<td height="17" class="isNoRtBdr"><input  type="text"  class="isIndex" name="SRCHFLD06" id="" size="44" maxlength="200"></td>
+<td disabled><img src=/RJSIMAGE/ButtonLookupDisabled.Gif width="48" height="15" border="0"></td>
+</tr>
+<tr>
+<td width="193" height="17" class="isBdr">
+Farm Manager</td>
+<td height="17" class="isNoRtBdr"><input  type="text"  class="isIndex" name="SRCHFLD07" id="" size="44" maxlength="200"></td>
+<td><a href="#" onClick="lookupwindow('SRCHFLD07','FMDOCUMENTS','USERKEY7')"><img src=/RJSIMAGE/ButtonLookup.Gif width="48" height="15" border="0"></a></td>
+</tr>
+<tr>
+<td width="193" height="17" class="isBdr">
+Statement Date                                                    (MM/YYYY)</td>
+<td height="17" class="isNoRtBdr"><input  type="text"  class="isIndex" name="SRCHFLD08" id="" size="44" maxlength="200"></td>
+<td disabled><img src=/RJSIMAGE/ButtonLookupDisabled.Gif width="48" height="15" border="0"></td>
+</tr>
+<tr>
+<td width="193" height="17" class="isBdr">
+Toss Date</td>
+<td height="17" class="isNoRtBdr"><input  type="text"  class="isIndex" name="SRCHFLD09" id="" size="44" maxlength="200"></td>
+<td disabled><img src=/RJSIMAGE/ButtonLookupDisabled.Gif width="48" height="15" border="0"></td>
+</tr>
+<tr>
+<td width="193" height="17" class="isBdr">
+Comments</td>
+<td height="17" class="isNoRtBdr"><input  type="text"  class="isIndex" name="SRCHFLD10" id="" size="44" maxlength="200"></td>
+<td disabled><img src=/RJSIMAGE/ButtonLookupDisabled.Gif width="48" height="15" border="0"></td>
+</tr>
+<TR valign="middle">
+<td width="202" height="17"><b><font size="-1">
+</font></b></td>
+<td width="389" height="17"><font size="-1">
+<input type="submit" name="ACTION" value="Search" maxlength="256">
+</td>
+<td></font></td>
+<td width="419" height="17">&nbsp;</td>
+</tr>
+<input type="hidden" name="ISESSION" id="isession" value="wholley10271510374044RJSWEB042180"><input type="hidden" name="action" value=""></table>
+</form>
+</table></td></tr></table></td></tr></table></body></html>

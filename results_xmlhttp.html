@@ -1,0 +1,652 @@
+
+
+<html><head><title>WebDocs - Document Management for the Web</title><link rel="stylesheet" type="text/css" href="/RJSIMAGE/doclist.css">
+<link rel="stylesheet" type="text/css" href="/RJSIMAGE/docdetail.css"><script type="text/javascript">
+function createXMLHttp()
+{
+  try
+  {
+    //alert("Firefox");
+    // Firefox, Opera 8.0+, Safari
+    return new XMLHttpRequest();
+  }
+  catch (e)
+  {
+    // Internet Explorer
+    try
+    {
+      //alert("msxml2");
+      return new ActiveXObject("Msxml2.XMLHTTP");
+    }
+    catch (e)
+    {
+      try
+      {
+        //alert("Microsoft");
+        return new ActiveXObject("Microsoft.XMLHTTP");
+      }
+      catch (e)
+      {
+        alert("Your browser does not support AJAX!");
+      }
+    }
+  }
+}
+</script>
+<SCRIPT type="text/javascript">
+function checkArchiveStatus(pDocID, pRevision, pUseActiveX, pMainURL,pArcOn) {
+   var pSession = document.getElementById("isession").value;
+   var url = "http://as400.farmers-national.com:1080/IMAGESERVER/DOC104R";
+   var postVars = "ACTION=checkArchiveStatus";
+   postVars += "&IDOCID=" + escape(pDocID);
+   postVars += "&ISESSION=" + escape(pSession);
+   postVars += "&IDOCREVC=" + escape(pRevision);
+   var xhrChkArcSts = createXMLHttp();
+  
+      xhrChkArcSts.open("POST", url, true);
+      xhrChkArcSts.setRequestHeader("Content-Type", "text/html");
+      xhrChkArcSts.onreadystatechange = function() {
+         // Send status code back to caller
+         if (xhrChkArcSts.readyState == 4) {
+            if (xhrChkArcSts.status == 200) {
+               var pStatus = xhrChkArcSts.responseText;
+               doArchiveStatus(pDocID, pRevision, pUseActiveX, pMainURL, pStatus);
+            }
+         }
+      }
+      xhrChkArcSts.send(postVars);
+  
+}
+</SCRIPT>
+<SCRIPT type="text/javascript">
+function queueForRestore(pDocID, pRevision) {
+   var pSession = document.getElementById("isession").value;
+   var url = "http://as400.farmers-national.com:1080/IMAGESERVER/DOC104R";
+   var postVars = "ACTION=queueForRestore";
+   postVars += "&IDOCID=" + escape(pDocID);
+   postVars += "&ISESSION=" + escape(pSession);
+   postVars += "&IDOCREVC=" + escape(pRevision);
+   var xhrQue4Rst = createXMLHttp();
+   if (typeof xhrQue4Rst != "undefined") {
+      xhrQue4Rst.open("POST", url, true);
+      xhrQue4Rst.setRequestHeader("Content-Type", "text/html");
+      xhrQue4Rst.onreadystatechange = function() {
+         // Display result of queueing the document for restore
+         if (xhrQue4Rst.readyState == 4) {
+            if (xhrQue4Rst.status == 200) {
+               alert(xhrQue4Rst.responseText);
+            }
+         }
+      }
+      xhrQue4Rst.send(postVars);
+   }
+}
+</SCRIPT>
+<script type="text/javascript">
+function processView(pDocID, pRevision, pUseActiveX, pMainURL,pArcOn) {
+   var archiveStatus = checkArchiveStatus(pDocID, pRevision, pUseActiveX, pMainURL,pArcOn);
+}
+</script>
+<script type="text/javascript">
+function doArchiveStatus(pDocID, pRevision, pUseActiveX, pMainURL, pStatus) {
+   switch(pStatus) {
+      case "A":   // archived to tape, not restored or queued for restore
+         var q4Restore = confirm("The document you selected is archived to " +
+                                 "tape and is not available at this " +
+                                 "time.\n\n" +
+                                 "Click OK to ask for the document to be " +
+                                 "restored; it should be ready for viewing " +
+                                 "within 24 hours.\n\n" +
+                                 "Click Cancel if you do not want the " +
+                                 "document restored.");
+         if (q4Restore) {
+            queueForRestore(pDocID, pRevision);
+         }
+         break;
+      case "Q":   //queued for restore
+         alert("The document you selected is waiting to be restored. It " +
+               "should be ready for viewing within 24 hours.");
+         break;
+      case "R":   // restored from tape
+      case " ":    // not on tape
+      case "":    // not on tape
+         var sSession = document.getElementById("isession").value;
+         var sLocation = "http://as400.farmers-national.com:1080/IMAGESERVER/DOC100R" +
+                         "?ACTION=VIEW" +
+                         "&IDOCID=" + pDocID +
+                         "&ISESSION=" + sSession +
+                         "&IDOCREVC=" + pRevision;
+         var isIE = window.ActiveXObject ? true : false;
+         if (pUseActiveX && isIE) {
+            window.location = "javascript:void(send_value('" + pMainURL + sLocation + "'))";
+         }
+         else {
+            window.location = sLocation;
+         }
+         break;
+   }
+}
+</script>
+<script>
+function selectdocs(numval){
+   var boxes=document.multi.elements;
+   var ct=0;
+   var i=0;
+   var lastchecked=0;
+   // Save last checked item
+   for (i=0;i<document.multi.elements.length;i++) {
+       if (document.multi.elements[i].checked) {
+         lastchecked=i;
+       }
+   }
+   // Unselect all items
+   for (i=0;i<document.multi.elements.length;i++) {
+       if (document.multi.elements[i].checked) {
+          document.multi.elements[i].checked=false;
+       }
+   }
+   // Select next xxx items from last checked item
+   for (i=lastchecked+1;i<document.multi.elements.length;i++) {
+       var type = document.multi.elements[i].type;
+       if (type=="checkbox"){
+          //alert(i);
+          document.multi.elements[i].checked=true;
+          ct++;
+       }
+       // Bail if count reached
+       if (ct >= numval) {
+          return;
+       }
+
+     }
+}
+</script>
+</head><body class="isBGColor1">
+<table border="1" bordercolor="#000000" bgcolor="#FFFFFF"><tr><td width="249" bordercolor="#FFFFFF"><table width="800"><tr><td colspan="7" class="isTitle">Document List for Folder&nbsp;<br>FNC F/M Documents&nbsp;(FARMMNGMNT)</td></tr><tr><td><table>
+<OBJECT ID="ctlRJSIETFR"
+CLASSID="CLSID:8758109C-BB16-40AE-A94C-31075129F706"
+CODEBASE="/rjsimage/rjsietfr.CAB#version=1,0,0,1">
+</OBJECT>
+<script>
+function send_value(svalue){
+  document.all('ctlRJSIETFR').GetFileURL(svalue,' ','Downloading Doc',1);
+}
+</script>
+<script>
+function jsdocprtmlt(urlvalue){
+   // Set ACTION
+  document.multi.ACTION.value="PrintMulti";
+  ////document.multi.submit();
+  // Build post string from form fields
+  var url = "/IMAGESERVER/DOC100R";
+  var elLength = document.multi.elements.length;
+  var thestr="";
+  for (i = 0; i < elLength; i++) {
+      var type = document.multi.elements[i].type;
+      if (type=="checkbox" && document.multi.elements[i].checked){
+          thestr = thestr + document.multi.elements[i].name + "=" +
+          document.multi.elements[i].value + "&";
+      }
+      if (type != "checkbox"){
+          thestr = thestr + document.multi.elements[i].name + "=" +
+          document.multi.elements[i].value + "&";
+      }
+   }
+   // Make sure value after trailing parm
+   thestr = thestr + "END1=1";
+   ////alert(thestr);
+   // Post form data to run PDF merge
+   var xhrDocPrtMlt = createXMLHttp();
+   if (typeof xhrDocPrtMlt != "undefined") {
+      ////alert('Before Open');
+      xhrDocPrtMlt.open("POST", url, true);
+      ////alert('Before Hdr 1');
+      xhrDocPrtMlt.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhrDocPrtMlt.onreadystatechange = function() {
+         // Send status code back to caller. Then do view
+         if (xhrDocPrtMlt.readyState == 4) {
+            if (xhrDocPrtMlt.status == 200) {
+              // Send completed. Now view the document
+              ////alert('Before View');
+              void(send_value(urlvalue));
+            }
+         }
+      }
+      // Send variables and wait until complete
+      ////alert('Before Send');
+      xhrDocPrtMlt.send(thestr);
+   }
+}
+</script>
+<tr><td align="left" colspan="7" height="17" class="navTdBdr"><table width="478" border="0"><tr>
+<td width="40" title="Check next 30 checkboxes"><div align="left"><a href='javascript:void(selectdocs(30));'><img src="http://as400.farmers-national.com:1080/RJSIMAGE/ButtonSelectAll.gif" border="0"></a></div></td>
+<td width="388"><div align="left">&nbsp;</div></td>
+</tr></TABLE></TD></tr>
+<form name="sortform" action="DOC100R"><input type="hidden" name="ISESSION" id="isession" value="wholley10271510374044RJSWEB042180">
+<input type="hidden" name="SRCHFOLDER" value="">
+<input type="hidden" name="SRCHTITLE" value="">
+<input type="hidden" name="SRCHDOCTYP" value="">
+<input type="hidden" name="SRCHFLD01" value="">
+<input type="hidden" name="SRCHFLD02" value="">
+<input type="hidden" name="SRCHFLD03" value="">
+<input type="hidden" name="SRCHFLD04" value="">
+<input type="hidden" name="SRCHFLD05" value="">
+<input type="hidden" name="SRCHFLD06" value="">
+<input type="hidden" name="SRCHFLD07" value="">
+<input type="hidden" name="SRCHFLD08" value="">
+<input type="hidden" name="SRCHFLD09" value="">
+<input type="hidden" name="SRCHFLD10" value="">
+<input type="hidden" name="SRCHSPOOL" value="">
+<input type="hidden" name="SRCHUSRDTA" value="">
+<input type="hidden" name="SRCHUSERID" value="">
+<input type="hidden" name="SRCHFRMTYP" value="">
+<input type="hidden" name="SRCHJOBNAM" value="">
+<input type="hidden" name="SRCHOUTQ" value="">
+<input type="hidden" name="SRCHUSRDFN" value="">
+<input type="hidden" name="BEGDAT" value="">
+<input type="hidden" name="ENDDAT" value="">
+<input type="hidden" name="SPBEGDAT" value="">
+<input type="hidden" name="ISELECT" value="">
+<input type="hidden" name="D1" value="FARMMNGMNT">
+<input type="hidden" name="D2" value="">
+<input type="hidden" name="D3" value="">
+<input type="hidden" name="D4" value="">
+<input type="hidden" name="D5" value="">
+<input type="hidden" name="SRCHFLD101" value="">
+<input type="hidden" name="SRCHFLD102" value="">
+<input type="hidden" name="SRCHFLD103" value="">
+<input type="hidden" name="SRCHFLD104" value="">
+<input type="hidden" name="SRCHFLD105" value="">
+<input type="hidden" name="SRCHFLD201" value="">
+<input type="hidden" name="SRCHFLD202" value="">
+<input type="hidden" name="SRCHFLD203" value="">
+<input type="hidden" name="SRCHFLD204" value="">
+<input type="hidden" name="SRCHFLD205" value="">
+<input type="hidden" name="SRCHFLD301" value="">
+<input type="hidden" name="SRCHFLD302" value="">
+<input type="hidden" name="SRCHFLD303" value="">
+<input type="hidden" name="SRCHFLD304" value="">
+<input type="hidden" name="SRCHFLD305" value="">
+<input type="hidden" name="SRCHFLD401" value="">
+<input type="hidden" name="SRCHFLD402" value="">
+<input type="hidden" name="SRCHFLD403" value="">
+<input type="hidden" name="SRCHFLD404" value="">
+<input type="hidden" name="SRCHFLD405" value="">
+<input type="hidden" name="SRCHFLD501" value="">
+<input type="hidden" name="SRCHFLD502" value="">
+<input type="hidden" name="SRCHFLD503" value="">
+<input type="hidden" name="SRCHFLD504" value="">
+<input type="hidden" name="SRCHFLD505" value="">
+<input type="hidden" name="SRCHDOCTP1" value="">
+<input type="hidden" name="SRCHDOCTP2" value="">
+<input type="hidden" name="SRCHDOCTP3" value="">
+<input type="hidden" name="SRCHDOCTP4" value="">
+<input type="hidden" value="DOCLIST" name="ACTION">
+<input type="hidden" name="IORDERBY">
+<input type="hidden" name="IUPDOWN">
+</form>
+<tr><td colspan="7" align="left" class="isInfo">To view a report or document, click on the view icon. To display the document details, click on the document description.</tr><tr>
+<td width="34" title="View" class="isTitleBdr">&nbsp;</td>
+<td width="24" title="Notes" class="isTitleBdr">&nbsp;</td>
+<td width="24" title="Email" class="isTitleBdr">&nbsp;</td>
+<td width="301" align="center" class="isTitleBdr" title="Order by Document Description"><a href='javascript:document.sortform.IORDERBY.value="TITLE";document.sortform.IUPDOWN.value="ASC";document.sortform.submit();'>Document Description</a></td>
+<td width="58" align="center" class="isTitleBdr" title="Order by Doc Type"><a href='javascript:document.sortform.IORDERBY.value="DOCTYPE2";document.sortform.IUPDOWN.value="ASC";document.sortform.submit();'>Doc Type</a></td>
+<td width="58" align="center" class="isTitleBdr" title="Order by Doc Date"><a href='javascript:document.sortform.IORDERBY.value="CHKDATE";document.sortform.IUPDOWN.value="ASC";document.sortform.submit();'>Doc Date</a></td>
+<td width="58" align="center" class="isTitleBdr" title="Order by Time"><a href='javascript:document.sortform.IORDERBY.value="CHKDATE";document.sortform.IUPDOWN.value="ASC";document.sortform.submit();'>Time</a></td>
+<td width="80" align="center" class="isTitleBdr" title="Order by Search Key 1"><a href='javascript:document.sortform.IORDERBY.value="KEYWORD1";document.sortform.IUPDOWN.value="ASC";document.sortform.submit();'>Search Key 1</a></td>
+<td width="80" align="center" class="isTitleBdr" title="Order by Search Key 2"><a href='javascript:document.sortform.IORDERBY.value="KEYWORD2";document.sortform.IUPDOWN.value="ASC";document.sortform.submit();'>Search Key 2</a></td>
+<td width="80" align="center" class="isTitleBdr" title="Order by Search Key 3"><a href='javascript:document.sortform.IORDERBY.value="KEYWORD3";document.sortform.IUPDOWN.value="ASC";document.sortform.submit();'>Search Key 3</a></td>
+<td width="80" align="center" class="isTitleBdr" title="Order by Search Key 4"><a href='javascript:document.sortform.IORDERBY.value="KEYWORD4";document.sortform.IUPDOWN.value="ASC";document.sortform.submit();'>Search Key 4</a></td>
+<td width="80" align="center" class="isTitleBdr" title="Order by Search Key 5"><a href='javascript:document.sortform.IORDERBY.value="KEYWORD5";document.sortform.IUPDOWN.value="ASC";document.sortform.submit();'>Search Key 5</a></td>
+<td width="80" align="center" class="isTitleBdr" title="Order by Search Key 6"><a href='javascript:document.sortform.IORDERBY.value="KEYWORD6";document.sortform.IUPDOWN.value="ASC";document.sortform.submit();'>Search Key 6</a></td>
+<td width="80" align="center" class="isTitleBdr" title="Order by Search Key 7"><a href='javascript:document.sortform.IORDERBY.value="KEYWORD7";document.sortform.IUPDOWN.value="ASC";document.sortform.submit();'>Search Key 7</a></td>
+<td width="80" align="center" class="isTitleBdr" title="Order by Search Key 8"><a href='javascript:document.sortform.IORDERBY.value="KEYWORD8";document.sortform.IUPDOWN.value="ASC";document.sortform.submit();'>Search Key 8</a></td>
+<td width="80" align="center" class="isTitleBdr" title="Order by Search Key 9"><a href='javascript:document.sortform.IORDERBY.value="KEYWORD9";document.sortform.IUPDOWN.value="ASC";document.sortform.submit();'>Search Key 9</a></td>
+<td width="80" align="center" class="isTitleBdr" title="Order by Search Key 10"><a href='javascript:document.sortform.IORDERBY.value="KEYWORD10";document.sortform.IUPDOWN.value="ASC";document.sortform.submit();'>Search Key 10</a></td>
+</TR><form name="multi" method="post" action="/IMAGESERVER/DOC100R"><input type="hidden" value="wholley10271510374044RJSWEB042180" name="ISESSION" id="isession">
+<input type="hidden" value="buttonAction" name="ACTION">
+<tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330408', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330408"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330408&ISESSION=wholley10271510374044RJSWEB042180">Reports-Harvest Reports</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2015&nbsp;</td>
+<td align="center" class="isColumn1">10:37:16&nbsp;</td>
+<td align="center" class="isColumn1">16465&nbsp;</td>
+<td align="center" class="isColumn1">|00760405|&nbsp;</td>
+<td align="center" class="isColumn1">|GGS-Buck Farms LLC|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">KG -Gutshall, Kevin            TMB&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2022&nbsp;</td>
+<td align="center" class="isColumn1">16465-corn.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330407', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330407"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330407&ISESSION=wholley10271510374044RJSWEB042180">Reports-Harvest Reports</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2015&nbsp;</td>
+<td align="center" class="isColumn1">10:37:12&nbsp;</td>
+<td align="center" class="isColumn1">15512&nbsp;</td>
+<td align="center" class="isColumn1">|00751875|&nbsp;</td>
+<td align="center" class="isColumn1">|Meredith Family Properties LLC|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">CRF -Freund, Clint              TLM&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2022&nbsp;</td>
+<td align="center" class="isColumn1">15512-corn.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330406', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330406"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330406&ISESSION=wholley10271510374044RJSWEB042180">Reports-Harvest Reports</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2015&nbsp;</td>
+<td align="center" class="isColumn1">10:37:09&nbsp;</td>
+<td align="center" class="isColumn1">19483&nbsp;</td>
+<td align="center" class="isColumn1">|01521529|&nbsp;</td>
+<td align="center" class="isColumn1">|Taylor, J. Mark|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">BS -Shannon, Bill              TMB&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2022&nbsp;</td>
+<td align="center" class="isColumn1">19483-cotton.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330405', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330405"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330405&ISESSION=wholley10271510374044RJSWEB042180">Permanent-Database Changes</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2015&nbsp;</td>
+<td align="center" class="isColumn1">10:37:05&nbsp;</td>
+<td align="center" class="isColumn1">20119&nbsp;</td>
+<td align="center" class="isColumn1">|01577741|01577750|&nbsp;</td>
+<td align="center" class="isColumn1">|Larson, Reed (c/o Barbara Finnegan)|Larson Family Irr Tr (B. Finnegan)|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">FO -Olsen, Fred                CMS&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2022&nbsp;</td>
+<td align="center" class="isColumn1">20119.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330404', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330404"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330404&ISESSION=wholley10271510374044RJSWEB042180">Permanent-Database Changes</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2015&nbsp;</td>
+<td align="center" class="isColumn1">10:37:01&nbsp;</td>
+<td align="center" class="isColumn1">17833&nbsp;</td>
+<td align="center" class="isColumn1">|00391275|01223978|01223986|&nbsp;</td>
+<td align="center" class="isColumn1">|Shriners Hospitals for Children|Memorial Foundation Inc.|St. Elizabeth&#39;s Hospital|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">BC -Cude, Bret                 TMB&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2022&nbsp;</td>
+<td align="center" class="isColumn1">17833.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330403', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330403"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330403&ISESSION=wholley10271510374044RJSWEB042180">Permanent-Database Changes</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2015&nbsp;</td>
+<td align="center" class="isColumn1">10:36:58&nbsp;</td>
+<td align="center" class="isColumn1">14868&nbsp;</td>
+<td align="center" class="isColumn1">|01611727|&nbsp;</td>
+<td align="center" class="isColumn1">|Caanen Holdings, LLC|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">PS -Sickler, Paul              TLM&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2022&nbsp;</td>
+<td align="center" class="isColumn1">14868.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330402', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330402"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330402&ISESSION=wholley10271510374044RJSWEB042180">Permanent-Database Changes</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2015&nbsp;</td>
+<td align="center" class="isColumn1">10:36:54&nbsp;</td>
+<td align="center" class="isColumn1">21325&nbsp;</td>
+<td align="center" class="isColumn1">|01765566|&nbsp;</td>
+<td align="center" class="isColumn1">|Hasty, Jerry Cecil|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">TB -Benton, Todd               TLM&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2022&nbsp;</td>
+<td align="center" class="isColumn1">21325.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330399', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330399"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330399&ISESSION=wholley10271510374044RJSWEB042180">Permanent-Database Changes</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2015&nbsp;</td>
+<td align="center" class="isColumn1">10:36:20&nbsp;</td>
+<td align="center" class="isColumn1">21280&nbsp;</td>
+<td align="center" class="isColumn1">|01762218|&nbsp;</td>
+<td align="center" class="isColumn1">|Sauder, Greg W. Trust|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">DDB -Bergemann, Douglas         TLM&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2022&nbsp;</td>
+<td align="center" class="isColumn1">21280.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330288', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330288"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330288&ISESSION=wholley10271510374044RJSWEB042180">Permanent-Management Agreements &amp; Addendums</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2015&nbsp;</td>
+<td align="center" class="isColumn1">09:02:16&nbsp;</td>
+<td align="center" class="isColumn1">11709&nbsp;</td>
+<td align="center" class="isColumn1">|01743121|01743130|01766534|&nbsp;</td>
+<td align="center" class="isColumn1">|Rice, Mary D.|Rice, John R.|Rice, Robert Estate|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">PS -Sickler, Paul              TLM&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2022&nbsp;</td>
+<td align="center" class="isColumn1">11709.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330286', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330286"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330286&ISESSION=wholley10271510374044RJSWEB042180">Permanent-Management Agreements &amp; Addendums</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2015&nbsp;</td>
+<td align="center" class="isColumn1">08:57:42&nbsp;</td>
+<td align="center" class="isColumn1">9448&nbsp;</td>
+<td align="center" class="isColumn1">|01743121|01743130|01766534|&nbsp;</td>
+<td align="center" class="isColumn1">|Rice, Mary D.|Rice, John R.|Rice, Robert Estate|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">SVD -Van Duyn, Seth             CMS&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2022&nbsp;</td>
+<td align="center" class="isColumn1">9448.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330250', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330250"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330250&ISESSION=wholley10271510374044RJSWEB042180">Leasing-Operator Insurance</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2015&nbsp;</td>
+<td align="center" class="isColumn1">08:10:43&nbsp;</td>
+<td align="center" class="isColumn1">10549&nbsp;</td>
+<td align="center" class="isColumn1">|00179629|&nbsp;</td>
+<td align="center" class="isColumn1">|Rizzi, Helen M|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">2016-0&nbsp;</td>
+<td align="center" class="isColumn1">PS -Sickler, Paul              TLM&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/27/2022&nbsp;</td>
+<td align="center" class="isColumn1">10549.pdf, uploaded by Ann Layman&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330183', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330183"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330183&ISESSION=wholley10271510374044RJSWEB042180">Permanent-Account Verification Forms</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2015&nbsp;</td>
+<td align="center" class="isColumn1">18:41:29&nbsp;</td>
+<td align="center" class="isColumn1">21321&nbsp;</td>
+<td align="center" class="isColumn1">|01765321|&nbsp;</td>
+<td align="center" class="isColumn1">|Parks, Rosemary E.|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">KR -Rule, Kyle                 TMB&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2022&nbsp;</td>
+<td align="center" class="isColumn1">21321.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330182', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330182"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330182&ISESSION=wholley10271510374044RJSWEB042180">Permanent-Account Verification Forms</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2015&nbsp;</td>
+<td align="center" class="isColumn1">18:41:19&nbsp;</td>
+<td align="center" class="isColumn1">21322&nbsp;</td>
+<td align="center" class="isColumn1">|01765355|&nbsp;</td>
+<td align="center" class="isColumn1">|Bram, Isabelle McDonough Estate|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">GAF -Frankenbach, Gregory       CMS&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2022&nbsp;</td>
+<td align="center" class="isColumn1">21322.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330181', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330181"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330181&ISESSION=wholley10271510374044RJSWEB042180">Reports-Farm Reports</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2015&nbsp;</td>
+<td align="center" class="isColumn1">18:39:58&nbsp;</td>
+<td align="center" class="isColumn1">16277&nbsp;</td>
+<td align="center" class="isColumn1">|00720411|&nbsp;</td>
+<td align="center" class="isColumn1">|Butte, Cara E.|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">GK -Knedlik, Greg              KMT&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2022&nbsp;</td>
+<td align="center" class="isColumn1">16277-fr2.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330180', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330180"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330180&ISESSION=wholley10271510374044RJSWEB042180">Reports-Farm Reports</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2015&nbsp;</td>
+<td align="center" class="isColumn1">18:39:31&nbsp;</td>
+<td align="center" class="isColumn1">19562&nbsp;</td>
+<td align="center" class="isColumn1">|01528114|&nbsp;</td>
+<td align="center" class="isColumn1">|Kimbell GST Trust Dtd 02/14/90|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">GK -Knedlik, Greg              KMT&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2022&nbsp;</td>
+<td align="center" class="isColumn1">19562-fr2.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330179', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330179"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330179&ISESSION=wholley10271510374044RJSWEB042180">Reports-Farm Reports</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2015&nbsp;</td>
+<td align="center" class="isColumn1">18:39:08&nbsp;</td>
+<td align="center" class="isColumn1">19236&nbsp;</td>
+<td align="center" class="isColumn1">|01469943|&nbsp;</td>
+<td align="center" class="isColumn1">|JackElle Farm Missouri LLC|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">GAF -Frankenbach, Gregory       CMS&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2022&nbsp;</td>
+<td align="center" class="isColumn1">19236-fr4.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330178', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330178"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330178&ISESSION=wholley10271510374044RJSWEB042180">Reports-Farm Reports</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2015&nbsp;</td>
+<td align="center" class="isColumn1">18:38:41&nbsp;</td>
+<td align="center" class="isColumn1">19139&nbsp;</td>
+<td align="center" class="isColumn1">|01451111|&nbsp;</td>
+<td align="center" class="isColumn1">|LeMone, Robert M. Marital Trust|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">GAF -Frankenbach, Gregory       CMS&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2022&nbsp;</td>
+<td align="center" class="isColumn1">19139-fr4.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330177', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330177"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330177&ISESSION=wholley10271510374044RJSWEB042180">Permanent-Statement of Tenant</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2015&nbsp;</td>
+<td align="center" class="isColumn1">18:37:53&nbsp;</td>
+<td align="center" class="isColumn1">21194&nbsp;</td>
+<td align="center" class="isColumn1">|01732772|&nbsp;</td>
+<td align="center" class="isColumn1">|Cassidy, Leslie I. Portion Four Fam Tr|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">GAF -Frankenbach, Gregory       CMS&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2022&nbsp;</td>
+<td align="center" class="isColumn1">21194.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330176', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330176"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330176&ISESSION=wholley10271510374044RJSWEB042180">Permanent-Statement of Tenant</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2015&nbsp;</td>
+<td align="center" class="isColumn1">18:37:26&nbsp;</td>
+<td align="center" class="isColumn1">21266&nbsp;</td>
+<td align="center" class="isColumn1">|01746816|&nbsp;</td>
+<td align="center" class="isColumn1">|Craft, Eric (c/o State Bank)|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">TJS -Schutter, Tom              TMB&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2022&nbsp;</td>
+<td align="center" class="isColumn1">21266.pdf&nbsp;</td>
+</TR><tr><td width="34" title="View" align="center" class="isColumn1"><A HREF="javascript:processView('AS400DOC-000000001330175', '999999999', true, 'http://10.0.1.4:1080', 0)"><img src="/RJSIMAGE/iconpdf.gif" border="0"></A></TD>
+<td width="24" align="center" class="isColumn1">&nbsp;</TD>
+<td width="24" align="center" class="isColumn1"><input type="checkbox" name="checkbox" value="AS400DOC-000000001330175"></TD>
+<td width="301" align="center" class="isColumn1"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCINFO&IDOCID=AS400DOC-000000001330175&ISESSION=wholley10271510374044RJSWEB042180">Permanent-Statement of Tenant</A></TD>
+<td align="center" class="isColumn1">FMDOCUMENTS&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2015&nbsp;</td>
+<td align="center" class="isColumn1">18:37:01&nbsp;</td>
+<td align="center" class="isColumn1">21265&nbsp;</td>
+<td align="center" class="isColumn1">|01746795|&nbsp;</td>
+<td align="center" class="isColumn1">|Craft, Andrew D. (c/o State Bank)|&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">TJS -Schutter, Tom              TMB&nbsp;</td>
+<td align="center" class="isColumn1">&nbsp;</td>
+<td align="center" class="isColumn1">10/26/2022&nbsp;</td>
+<td align="center" class="isColumn1">21265.pdf&nbsp;</td>
+</TR><TR><TD ALIGN="CENTER" WIDTH="10" BGCOLOR="#CCCCCC"><font face="Arial" COLOR="#000000" SIZE="2"><A HREF="/IMAGESERVER/DOC100R?ACTION=DOCLIST&D1=FARMMNGMNT&IDOCIDNEXT=AS400DOC-000000001330174&IDOCIDNXDT=2015-10-26-18.37.01.124000&ISESSION=wholley10271510374044RJSWEB042180&IORDERBY=&IUPDOWN="><img src="/RJSIMAGE/ButtonNext.gif" border="0"></A></TD></form>
+</TABLE>
+</TD>
+</TR>
+</table></td></tr></table></td></tr></table></body></html>
