@@ -15,7 +15,7 @@ router.get('/', function(req, res, next) {
 	//res.send(JSON.stringify({a: 1}));
     //res.render('index', { title: 'Express' });
     var xhr = new XMLHttpRequest();
-    xhr.open('get', 'http://as400.farmers-national.com:1080/IMAGESERVER/DOC104R', true);
+    xhr.open('get', 'http://as400.farmers-national.com:1080/IMAGESERVER/DOC104R?action=Search', true);
     xhr.send();
     next();
 }, function(req, res, next){
