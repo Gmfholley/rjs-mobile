@@ -33,6 +33,23 @@ function createXMLHttp()
   }
 }
 </script>
+<script>
+function callXML(){
+
+ var xhr = new XMLHttpRequest();
+    xhr.open('get', 'http://as400.farmers-national.com:1080/IMAGESERVER/DOC100R?ACTION=VIEW&IDOCID=AS400DOC-000000001330785&ISESSION=wholley10271510374044RJSWEB042180&IDOCREVC=999999999', true);
+    xhr.setRequestHeader("Content-Type", "application/pdf");
+    xhr.onload = function (e) {
+    console.log(e);
+    res.send(xhr.response);
+  };
+    xhr.send();
+}
+
+</script>
+
+<button onclick="callXML()"></button>
+
 <SCRIPT type="text/javascript">
 function checkArchiveStatus(pDocID, pRevision, pUseActiveX, pMainURL,pArcOn) {
    var pSession = document.getElementById("isession").value;

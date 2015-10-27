@@ -17,13 +17,14 @@ router.get('/', function(req, res, next) {
    //xhr.send();
    // console.log('Time');
     var xhr = new xmlHttp();
-    xhr.open('get', 'http://as400.farmers-national.com:1080/IMAGESERVER/DOC104R?action=Search', true);
-    next();
-}, function(req, res, next){
-
-	next();
-}, function(req, res, next){
-	res.sendFile(path.join(__dirname + '/../views/plain.html'));	
+    xhr.open('get', 'http://as400.farmers-national.com:1080/IMAGESERVER/DOC100R?ACTION=VIEW&IDOCID=AS400DOC-000000001330785&ISESSION=wholley10271510374044RJSWEB042180&IDOCREVC=999999999', true);
+    xhr.setRequestHeader("Content-Type", "application/pdf");
+    xhr.onload = function (e) {
+	  console.log(xhr.response);
+	  res.sendFile(xhr.response);
+	};
+    xhr.send();
+   
 });
 
 module.exports = router;
