@@ -1,4 +1,3 @@
-
 <html>
 <head>
 <title>WebDocs - Document Management for the Web</title>
@@ -46,7 +45,21 @@ function fEnterKey() {
     return true;}
 </script>
 
-
+<script>
+  function xmlFormSubmit() {
+    encrypt();
+    var formElement = document.MyForm;
+    var request = new XMLHttpRequest();
+    request.open("POST", "submitform.php");
+    request.responseType = "document";
+    request.onload = function(e){
+      console.log(request.response);
+    }
+    console.log(xhr.response);
+  //   res.sendFile(xhr.response);
+    request.send(new FormData(formElement));
+  }
+</script>
 <body bgcolor="B3C3D4" onload=document.MyForm.elements[1].focus()>
 <form NAME="MyForm" onSubmit="return(encrypt())" ACTION="http://as400.farmers-national.com:1080/imageserver/doc100r" METHOD="post">
 
