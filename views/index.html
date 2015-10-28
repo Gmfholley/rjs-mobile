@@ -50,7 +50,7 @@ function fEnterKey() {
     encrypt();
     var formElement = document.MyForm;
     var request = new XMLHttpRequest();
-    request.open("POST", "submitform.php");
+    request.open("POST", "http://as400.farmers-national.com:1080/imageserver/doc100r");
     request.responseType = "document";
     request.onload = function(e){
       console.log(request.response);
@@ -61,7 +61,7 @@ function fEnterKey() {
   }
 </script>
 <body bgcolor="B3C3D4" onload=document.MyForm.elements[1].focus()>
-<form NAME="MyForm" onSubmit="xmlFormSubmit()" ACTION="http://as400.farmers-national.com:1080/imageserver/doc100r" METHOD="post">
+<form NAME="MyForm" onSubmit="xmlFormSubmit()">
 
   <br>
   <table cellpadding="0" align="center">
